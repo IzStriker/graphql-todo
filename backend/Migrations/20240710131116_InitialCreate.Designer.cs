@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace backend.Migrations
 {
     [DbContext(typeof(TodoDbContext))]
-    [Migration("20240710130604_InitialCreate")]
+    [Migration("20240710131116_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -66,10 +66,6 @@ namespace backend.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("text");
 
