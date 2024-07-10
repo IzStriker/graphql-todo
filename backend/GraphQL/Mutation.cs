@@ -1,10 +1,13 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Unicode;
 using Backend.GraphQL.Exceptions;
 using Backend.GraphQL.Models;
 using Backend.Models;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Backend.GraphQL;
@@ -17,15 +20,16 @@ public class Mutation
     {
         var user = context.Users.Single(u => u.Email == email);
 
-        // var hash = Rfc2898DeriveBytes.Pbkdf2(
-        //     Encoding.UTF8.GetBytes(input.Password),
-        //     Encoding.UTF8.GetBytes("ChangeMe!!"),
-        //     350000,
-        //     HashAlgorithmName.SHA256,
-        //     64
-        // );
 
-        if (user is null || password != user.Password)
+        var hash = Convert.ToBase64String(Rfc2898DeriveBytes.Pbkdf2(
+            password,
+            user.PasswordSalt,
+            100000,
+            HashAlgorithmName.SHA256,
+            32
+        ));
+
+        if (user is null || user.Password != hash)
         {
             throw new FailedLoginException();
         }
@@ -51,5 +55,45 @@ public class Mutation
             Token = new JwtSecurityTokenHandler().WriteToken(token),
             ValidTill = token.ValidTo
         };
+    }
+
+    public User RegisterUser(string email, string password, [Service] TodoDbContext context)
+    {
+        try
+        {
+
+            _ = new MailAddress(email);
+        }
+        catch
+        {
+            throw new GraphQLException("Invalid Email address");
+        }
+
+        if (context.Users.Any(u => u.Email == email))
+        {
+            throw new GraphQLException("A user with this email already exists");
+        }
+
+        var salt = RandomNumberGenerator.GetBytes(16);
+        string hash = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+            password,
+            salt,
+            prf: KeyDerivationPrf.HMACSHA256,
+            iterationCount: 100000,
+            numBytesRequested: 32
+        ));
+
+        context.Users.Add(
+            new User
+            {
+                Id = Guid.NewGuid().ToString(),
+                Email = email,
+                Password = hash,
+                PasswordSalt = salt,
+            }
+        );
+        context.SaveChanges();
+
+        return context.Users.Single(u => u.Email == email);
     }
 }
