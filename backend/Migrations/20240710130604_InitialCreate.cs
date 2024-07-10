@@ -52,6 +52,12 @@ namespace backend.Migrations
                 name: "IX_Task_UserId",
                 table: "Task",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_Email",
+                table: "Users",
+                column: "Email",
+                unique: true);
         }
 
         /// <inheritdoc />
