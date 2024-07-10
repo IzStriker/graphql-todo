@@ -45,7 +45,8 @@ builder.Services
     .AddQueryType<Query>()
     .AddMutationType<Mutation>()
     .AddAuthorization()
-    .AddMutationConventions();
+    .AddMutationConventions()
+    .AddProjections();
 
 var app = builder.Build();
 

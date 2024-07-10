@@ -7,6 +7,7 @@ using System.Text.Unicode;
 using Backend.GraphQL.Exceptions;
 using Backend.GraphQL.Models;
 using Backend.Models;
+using HotChocolate.Authorization;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.IdentityModel.Tokens;
 
@@ -44,6 +45,7 @@ public class Mutation
             expires: DateTime.Now.AddDays(1),
             claims:
             [
+                new(ClaimTypes.NameIdentifier, user.Id),
                 new(ClaimTypes.Email, user.Email),
                 new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             ],
@@ -95,5 +97,25 @@ public class Mutation
         context.SaveChanges();
 
         return context.Users.Single(u => u.Email == email);
+    }
+
+    [Authorize]
+    public Backend.Models.Task CreateTask(string title, string description, bool isComplete, [Service] TodoDbContext context, ClaimsPrincipal claims)
+    {
+        var userId = claims.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new Exception();
+
+        var task = new Backend.Models.Task
+        {
+            Id = Guid.NewGuid().ToString(),
+            Title = title,
+            Description = description,
+            IsComplete = isComplete,
+            UserId = userId,
+        };
+
+        context.Task.Add(task);
+        context.SaveChanges();
+
+        return task;
     }
 }
