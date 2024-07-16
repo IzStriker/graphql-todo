@@ -8,8 +8,14 @@
     "lint": "eslint . --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "@apollo/client": "^3.10.8",
     "@mdi/font": "7.4.47",
+    "@vue/apollo-composable": "^4.0.2",
+    "@vue/apollo-util": "^4.0.0-beta.6",
+    "apollo-link": "^1.2.14",
     "core-js": "^3.37.1",
+    "graphql": "^16.9.0",
+    "graphql-tag": "^2.12.6",
     "roboto-fontface": "*",
     "vue": "^3.4.31",
     "vuetify": "^3.6.11"

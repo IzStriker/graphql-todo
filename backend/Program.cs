@@ -9,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 var configuration = builder.Configuration;
 
+builder.Services.AddCors();
+
 builder.Services.AddDbContext<TodoDbContext>(
     opt => opt.UseNpgsql(configuration.GetConnectionString("DefaultConnection"))
 );
@@ -51,6 +53,7 @@ builder.Services
 
 var app = builder.Build();
 
+app.UseCors(b => b.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapGraphQL();
