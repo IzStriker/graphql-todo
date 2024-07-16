@@ -11,6 +11,7 @@ public class Query
     public IQueryable<User> GetUsers([Service] TodoDbContext context) => context.Users;
 
     [Authorize]
+    [HotChocolate.Data.UseFiltering]
     public IQueryable<Backend.Models.Task> GetTasks([Service] TodoDbContext context, ClaimsPrincipal claims)
     {
         var userId = claims.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new Exception();
