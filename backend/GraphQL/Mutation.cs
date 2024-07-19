@@ -19,18 +19,17 @@ public class Mutation
     [Error<FailedLoginException>]
     public LoginRes Login(string email, string password, [Service] TodoDbContext context, [Service] IConfiguration configuration)
     {
-        var user = context.Users.Single(u => u.Email == email);
-
+        var user = context.Users.SingleOrDefault(u => u.Email == email) ?? throw new FailedLoginException();
 
         var hash = Convert.ToBase64String(Rfc2898DeriveBytes.Pbkdf2(
             password,
-            user.PasswordSalt,
+            Convert.FromBase64String(user.PasswordSalt),
             100000,
             HashAlgorithmName.SHA256,
             32
         ));
 
-        if (user is null || user.Password != hash)
+        if (user.Password != hash)
         {
             throw new FailedLoginException();
         }
@@ -91,7 +90,7 @@ public class Mutation
                 Id = Guid.NewGuid().ToString(),
                 Email = email,
                 Password = hash,
-                PasswordSalt = salt,
+                PasswordSalt = Convert.ToBase64String(salt),
             }
         );
         context.SaveChanges();

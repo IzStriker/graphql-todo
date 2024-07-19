@@ -61,9 +61,9 @@ namespace backend.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<byte[]>("PasswordSalt")
+                    b.Property<string>("PasswordSalt")
                         .IsRequired()
-                        .HasColumnType("bytea");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 

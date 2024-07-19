@@ -13,6 +13,6 @@ public class User
     [GraphQLIgnore]
     public string Password { get; set; } = string.Empty;
     [GraphQLIgnore]
-    public byte[] PasswordSalt { get; set; } = [];
+    public string PasswordSalt { get; set; } = string.Empty;
     public List<Task> Tasks { get; set; } = [];
 }
