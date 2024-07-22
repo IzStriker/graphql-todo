@@ -90,7 +90,6 @@ const submit = async () => {
   });
 
   if (res?.data.login.errors) {
-    console.log("errors", res);
     formErrors.value.email = true;
     formErrors.value.password = true;
     errorMessages.value.form = res.data.login.errors
