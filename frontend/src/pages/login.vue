@@ -16,10 +16,13 @@
         :error="formErrors.password"
         :error-messages="errorMessages.password"
       ></VTextField>
-      <VAlert type="error" v-if="errorMessages.form">{{
+      <VAlert type="error" v-if="errorMessages.form" class="mb-5">{{
         errorMessages.form
       }}</VAlert>
-      <VBtn type="submit" block class="mt-5">Login</VBtn>
+      <VBtn type="submit" block class="mb-5">Login</VBtn>
+      <VBtn type="button" block class="mb-5" to="/register">
+        Create an account
+      </VBtn>
     </VForm>
   </v-flex>
 </template>

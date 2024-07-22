@@ -58,6 +58,8 @@ public class Mutation
         };
     }
 
+    [Error<InvalidEmailException>]
+    [Error<EmailInUseException>]
     public User RegisterUser(string email, string password, [Service] TodoDbContext context)
     {
         try
@@ -67,12 +69,12 @@ public class Mutation
         }
         catch
         {
-            throw new GraphQLException("Invalid Email address");
+            throw new InvalidEmailException();
         }
 
         if (context.Users.Any(u => u.Email == email))
         {
-            throw new GraphQLException("A user with this email already exists");
+            throw new EmailInUseException();
         }
 
         var salt = RandomNumberGenerator.GetBytes(16);

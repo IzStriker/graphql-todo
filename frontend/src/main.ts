@@ -9,6 +9,7 @@ import { DefaultApolloClient } from "@vue/apollo-composable";
 import App from "./App.vue";
 import { apolloClient } from "@/apollo-client";
 import { createApp, provide, h } from "vue";
+import "vue3-toastify/dist/index.css";
 
 const app = createApp({
   setup() {
