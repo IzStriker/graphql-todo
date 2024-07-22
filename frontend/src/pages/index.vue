@@ -1,4 +1,4 @@
-<template></template>
+<template>Protected Page</template>
 
 <script lang="ts" setup>
 //

@@ -1,7 +1,7 @@
 <template>
   <v-flex class="w-50">
     <VCardTitle class="text-h4">Login</VCardTitle>
-    <VForm @submit.prevent="submit" ref="form">
+    <VForm @submit.prevent="submit">
       <VTextField
         v-model="formData.email"
         label="Email"
@@ -30,8 +30,9 @@
 import { ref } from "vue";
 import { useMutation } from "@vue/apollo-composable";
 import gql from "graphql-tag";
+import { useRouter } from "vue-router";
 
-const form = ref();
+const router = useRouter();
 const formData = ref<Record<string, string>>({
   email: "",
   password: "",
@@ -99,6 +100,7 @@ const submit = async () => {
   }
   if (res && res.data.login.errors == null) {
     localStorage.setItem("token", res.data.login.loginRes.token);
+    router.push({ path: "/" });
   }
 };
 </script>
