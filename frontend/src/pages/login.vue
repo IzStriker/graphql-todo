@@ -76,10 +76,6 @@ const submit = async () => {
     }
   });
 
-  if (formData.value.email == null || formData.value.email.trim().length == 0) {
-    formErrors.value.email = true;
-  }
-
   if (Object.values(formErrors.value).some((v) => v)) {
     return;
   }

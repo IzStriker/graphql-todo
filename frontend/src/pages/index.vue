@@ -17,8 +17,13 @@
       </VCard>
     </VSheet>
     <div class="d-flex mt-5">
-      <VBtn height="50" class="flex-1-0 mr-5">Create Task</VBtn>
-      <VBtn height="50" class="flex-1-1">Show Completed</VBtn>
+      <VBtn height="50" class="flex-1-0 mr-5" to="/create">Create Task</VBtn>
+      <VBtn
+        height="50"
+        class="flex-1-1"
+        @click="includeCompleted = !includeCompleted"
+        >{{ includeCompleted ? "Show Uncompleted" : "Show Completed" }}
+      </VBtn>
     </div>
   </div>
 </template>
@@ -26,12 +31,14 @@
 <script lang="ts" setup>
 import { useQuery } from "@vue/apollo-composable";
 import gql from "graphql-tag";
-import { ref } from "vue";
+import { ref, watch, computed } from "vue";
 
-const includeCompleted = ref(true);
-const query = includeCompleted.value ? {} : { isComplete: { eq: false } };
+const includeCompleted = ref(false);
+const query = computed(() =>
+  includeCompleted.value ? {} : { isComplete: { eq: false } }
+);
 
-const { result, loading } = useQuery(
+const { result, loading, refetch } = useQuery(
   gql`
     query getTasks($query: TaskFilterInput!) {
       tasks(where: $query) {
@@ -47,4 +54,9 @@ const { result, loading } = useQuery(
     query,
   }
 );
+
+watch(includeCompleted, () => {
+  loading.value = true;
+  refetch();
+});
 </script>
