@@ -119,4 +119,21 @@ public class Mutation
 
         return task;
     }
+
+    [Authorize]
+    public Backend.Models.Task UpdateTask(string id, bool isComplete, [Service] TodoDbContext context, ClaimsPrincipal claims)
+    {
+        var task = context.Task.Find(id) ?? throw new Exception();
+        var userId = claims.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new Exception();
+
+        if (task.UserId != userId)
+        {
+            throw new Exception();
+        }
+
+        task.IsComplete = isComplete;
+        context.SaveChanges();
+
+        return task;
+    }
 }

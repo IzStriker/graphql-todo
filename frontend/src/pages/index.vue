@@ -12,7 +12,9 @@
         v-else
       >
         <VCardActions>
-          <VBtn>Mark Complete</VBtn>
+          <VBtn @click="updateTask(task.id, task.isComplete)">{{
+            task.isComplete ? "Mark Uncomplete" : "Mark Complete"
+          }}</VBtn>
         </VCardActions>
       </VCard>
     </VSheet>
@@ -29,7 +31,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useQuery } from "@vue/apollo-composable";
+import { useQuery, useMutation } from "@vue/apollo-composable";
 import gql from "graphql-tag";
 import { ref, watch, computed } from "vue";
 
@@ -55,8 +57,27 @@ const { result, loading, refetch } = useQuery(
   }
 );
 
+const { mutate: mutateTask } = useMutation(gql`
+  mutation updateTask($id: String!, $isComplete: Boolean!) {
+    updateTask(input: { id: $id, isComplete: $isComplete }) {
+      task {
+        id
+      }
+    }
+  }
+`);
+
 watch(includeCompleted, () => {
   loading.value = true;
   refetch();
 });
+
+const updateTask = async (id: string, isComplete: boolean) => {
+  await mutateTask({
+    id,
+    isComplete: !isComplete,
+  });
+  loading.value = true;
+  refetch();
+};
 </script>
